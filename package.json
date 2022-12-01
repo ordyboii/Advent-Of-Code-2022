@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "1": "ts-node ./1/main.ts",
+    "2": "ts-node ./2/main.ts"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1"
+  }
+}

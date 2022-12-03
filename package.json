@@ -1,7 +1,8 @@
 {
   "scripts": {
-    "1": "ts-node ./1/main.ts",
-    "2": "ts-node ./2/main.ts"
+    "day-1": "ts-node ./1/main.ts",
+    "day-2": "ts-node ./2/main.ts",
+    "day-3": "ts-node ./3/main.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.1"

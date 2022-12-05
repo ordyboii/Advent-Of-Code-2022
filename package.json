@@ -4,7 +4,8 @@
     "day-2": "ts-node ./2/main.ts",
     "day-3": "ts-node ./3/main.ts",
     "day-4": "ts-node ./4/main.ts",
-    "day-5": "ts-node ./5/main.ts"
+    "day-5": "ts-node ./5/main.ts",
+    "day-6": "ts-node ./6/main.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.1"

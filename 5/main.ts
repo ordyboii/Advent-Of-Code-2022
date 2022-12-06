@@ -5,34 +5,30 @@ const input = fs
   .readFileSync(path.resolve("5/input.txt"), "utf-8")
   .split("\n\n");
 
-const drawing = input[0].split("\n");
-const stacks: string[][] = Array(9).map(() => []);
+const diagram = input[0].split("\n").reverse().slice(1);
+const stacks: string[][] = [];
 
-const parseFourthCharacter = (str: string) => {
-  let result = "";
-  for (let i = 1; i < str.length; i += 4) result += str[i];
+diagram.forEach(line => {
+  let idx = 0;
+  let craneIdx = 0;
 
-  return result;
-};
+  while (idx < line.length) {
+    if (stacks.length <= craneIdx) stacks.push([]);
 
-for (let i = 0; i < 8; i++) {
-  const line = drawing[i];
-  const crates = parseFourthCharacter(line);
+    if (line[idx].startsWith("[")) {
+      const character = line.charAt(idx + 1);
+      stacks[craneIdx].push(character);
+    }
 
-  for (let j = 0; j < crates.length; j++) {
-    if (!stacks[j]) stacks[j] = [];
-    if (crates[j] !== " ") stacks[j].push(crates[j]);
+    idx += 4;
+    craneIdx += 1;
   }
-}
-
-// Reverse stacks to get the order in the drawing
-stacks.map(stack => stack.reverse());
+});
 
 const commands = input[1].split("\n");
 
 commands.forEach(line => {
   const tokens = line.split(" ");
-  // Parse the commands
   const num = parseInt(tokens[1]);
   const from = parseInt(tokens[3]) - 1;
   const to = parseInt(tokens[5]) - 1;
@@ -49,24 +45,27 @@ const message = stacks.map(stack => stack[stack.length - 1]).join("");
 console.log("Reconfiguration message", message);
 
 // Part 2 needs a new stack as the previous stacks array has been modified
-const newStacks: string[][] = Array(9).map(() => []);
+const newStacks: string[][] = [];
 
-for (let i = 0; i < 8; i++) {
-  const line = drawing[i];
-  const crates = parseFourthCharacter(line);
+diagram.forEach(line => {
+  let idx = 0;
+  let craneIdx = 0;
 
-  for (let j = 0; j < crates.length; j++) {
-    if (!newStacks[j]) newStacks[j] = [];
-    if (crates[j] !== " ") newStacks[j].push(crates[j]);
+  while (idx < line.length) {
+    if (newStacks.length <= craneIdx) newStacks.push([]);
+
+    if (line[idx].startsWith("[")) {
+      const character = line.charAt(idx + 1);
+      newStacks[craneIdx].push(character);
+    }
+
+    idx += 4;
+    craneIdx += 1;
   }
-}
-
-// Reverse stacks to get the order in the drawing
-newStacks.map(stack => stack.reverse());
+});
 
 commands.forEach(line => {
   const tokens = line.split(" ");
-  // Parse the commands
   const num = parseInt(tokens[1]);
   const from = parseInt(tokens[3]) - 1;
   const to = parseInt(tokens[5]) - 1;
@@ -88,5 +87,5 @@ commands.forEach(line => {
 });
 
 // Get last element of array, map over it and join it into a string with no spaces
-const betterMessage = newStacks.map(stack => stack[stack.length - 1]).join("");
-console.log("Better reconfiguration message", betterMessage);
+const newMessage = newStacks.map(stack => stack[stack.length - 1]).join("");
+console.log("New reconfiguration message", newMessage);

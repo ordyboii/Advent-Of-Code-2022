@@ -55,7 +55,6 @@ for (let i = 0; i < 10000; i++) {
 
       // Part 2 we use a modular amount to keep the numbers from getting to high
       // This amount is done via multiplying the monkeys by the divisible number in the input
-      // I'll admit this one was lifted f
       const worry = monkey.operation(item) % modular;
       const monkeyToPass = monkey.test(worry);
       monkeys[monkeyToPass].items.push(worry);

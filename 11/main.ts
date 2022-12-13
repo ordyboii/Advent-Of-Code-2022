@@ -28,13 +28,12 @@ const monkeys = groups.map(line => ({
 
     return item;
   },
-  test: (bored: number) => {
-    const divisbleNumber = parseInt(line[3].split(":")[1].split(" ")[3]);
+  test: (bored: number, divisible: number) => {
     const monkeyTrue = parseInt(line[4].split(":")[1].split(" ")[4]);
     const monkeyFalse = parseInt(line[5].split(":")[1].split(" ")[4]);
 
     // Returns monkey to throw item too
-    if (bored % divisbleNumber === 0) {
+    if (bored % divisible === 0) {
       return monkeyTrue;
     }
     return monkeyFalse;
@@ -46,27 +45,20 @@ const modular = monkeys.reduce((a, b) => a * b.divisibleNumber, 1);
 
 for (let i = 0; i < 10000; i++) {
   for (const monkey of monkeys) {
-    for (let i = 0; i < monkey.items.length; i++) {
-      const item = monkey.items[i];
+    for (const item of monkey.items) {
       monkey.inspected++;
-
-      // Part 1 the worry level is divided in part 2 it isn't
+      // Part 1 the worry level is divided by 3
       // const worry = Math.floor(monkey.operation(item) / 3);
-
       // Part 2 we use a modular amount to keep the numbers from getting to high
-      // This amount is done via multiplying the monkeys by the divisible number in the input
       const worry = monkey.operation(item) % modular;
-      const monkeyToPass = monkey.test(worry);
+      const monkeyToPass = monkey.test(worry, monkey.divisibleNumber);
       monkeys[monkeyToPass].items.push(worry);
-
-      // Push any items being passed
-      monkey.items.splice(i, 1);
-      // Account for removed item
-      i--;
     }
+    // All items passed on
+    monkey.items = [];
   }
 }
 
-console.log(monkeys);
 const sorted = monkeys.sort((a, b) => b.inspected - a.inspected).splice(0, 2);
+
 console.log("Monkey sum", sorted[0].inspected * sorted[1].inspected);

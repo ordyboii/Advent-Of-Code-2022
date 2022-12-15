@@ -2,116 +2,85 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 
 const input = readFileSync(resolve("14/input.txt"), "utf-8");
+const lines = input.split("\n");
 
-const scan = input
-  .split("\n")
-  .map(line =>
-    line.split(" -> ").map(pair => pair.split(",").map(num => parseInt(num)))
-  );
+const map = new Map<string, string>();
+let highestRow = 0;
 
-const xScanCoords: number[] = [];
-const scanYCoords: number[] = [];
+for (const line of lines) {
+  const parts = line.split(" -> ");
 
-scan.forEach(line => {
-  for (const coord of line) {
-    xScanCoords.push(coord[0]);
-    scanYCoords.push(coord[1]);
-  }
-});
+  for (let i = 1; i < parts.length; i++) {
+    const [startCol, startRow] = parts[i - 1].split(",").map(Number);
+    const [endCol, endRow] = parts[i].split(",").map(Number);
 
-const minRowSize = Math.min(...xScanCoords);
-const maxRowSize = Math.max(...xScanCoords);
-const maxX = maxRowSize - minRowSize;
-const maxH = Math.max(...scanYCoords);
-
-const drawLine = (start: number[], end: number[], grid: string[][]) => {
-  let [x1, y1] = start;
-  let [x2, y2] = end;
-
-  // If the line is vertical, make sure the second point has a higher x coordinate
-  if (x1 === x2 && y1 > y2) [y1, y2] = [y2, y1];
-  // If the line is horizontal, make sure the second point has a higher y coordinate
-  if (y1 === y2 && x1 > x2) [x1, x2] = [x2, x1];
-
-  // Check if the line is vertical
-  if (x1 === x2) {
-    for (let y = y1; y <= y2; y++) grid[y][x1] = "#";
-  } else if (y1 === y2) {
-    for (let x = x1; x <= x2; x++) grid[y1][x] = "#";
-  }
-
-  return grid;
-};
-
-const fillCave = (grid: string[][]) => {
-  scan.forEach(line => {
-    for (let i = 1; i < line.length; i++) {
-      const [x1, y1] = line[i - 1];
-      const [x2, y2] = line[i];
-
-      // Check if we get the last value as it will modulus to zero so we put it to the end instead
-      let translatedX = (x1 - minRowSize) % maxX;
-      if (x1 - minRowSize >= maxX) translatedX = maxX;
-      // Gives index position on the row range;
-      // e.g. 494 -> 503 is length of 9 therefore 500 would be index 6
-      const start = [translatedX, y1];
-      const end = [(x2 - minRowSize) % maxX, y2];
-
-      drawLine(start, end, grid);
-    }
-  });
-
-  return grid;
-};
-
-const simulateSand = (grid: string[][]) => {
-  const sand = [(500 - minRowSize) % maxX, 0];
-  grid[sand[1]][sand[0]] = "+";
-
-  let startX = sand[0];
-  let startY = sand[1];
-
-  let sandCount = 0;
-
-  while (startY < grid.length) {
-    if (
-      startY === grid.length - 1 ||
-      startY < 0 ||
-      startX > grid[0].length - 1 ||
-      startX < 0
-    )
-      break;
-
-    if (grid[startY + 1][startX] === ".") {
-      startY += 1;
-    } else if (grid[startY + 1][startX - 1] === ".") {
-      startY += 1;
-      startX -= 1;
-    } else if (grid[startY + 1][startX + 1] === ".") {
-      startY += 1;
-      startX += 1;
-    } else if (startY >= grid.length - 1 || startX === 0) {
-      break;
+    if (startCol !== endCol) {
+      for (
+        let j = Math.min(startCol, endCol);
+        j <= Math.max(startCol, endCol);
+        j++
+      ) {
+        map.set(JSON.stringify({ row: startRow, col: j }), "#");
+      }
     } else {
-      grid[startY][startX] = "o";
-      sandCount++;
+      for (
+        let j = Math.min(startRow, endRow);
+        j <= Math.max(startRow, endRow);
+        j++
+      ) {
+        map.set(JSON.stringify({ row: startRow, col: j }), "#");
+      }
+    }
 
-      startX = sand[0];
-      startY = sand[1];
+    if (endRow > highestRow) {
+      highestRow = endRow;
+    }
 
-      const debug = cave.forEach(row => console.log(row.join(" ")));
-      console.log(debug, sandCount);
+    if (startRow > highestRow) {
+      highestRow = startRow;
     }
   }
+}
 
-  return sandCount;
-};
+// Simulate sand
+let fallingIntoAbyss = false;
+let sandBits = 0;
 
-const grid: string[][] = Array.from({ length: maxH + 1 }, () =>
-  Array(maxX + 1).fill(".")
-);
+while (!fallingIntoAbyss) {
+  let sand = { row: 0, col: 500 };
+  let resting = false;
 
-const cave = fillCave(grid);
-const count = simulateSand(cave);
+  while (!resting) {
+    const below = { row: sand.row + 1, col: sand.col };
 
-console.log(count);
+    if (below.row > highestRow) {
+      fallingIntoAbyss = true;
+      break;
+    }
+
+    if (!map.has(JSON.stringify(below))) {
+      sand = below;
+      continue;
+    }
+
+    const belowLeft = { row: sand.row + 1, col: sand.col - 1 };
+    if (!map.has(JSON.stringify(belowLeft))) {
+      sand = belowLeft;
+      continue;
+    }
+
+    const belowRight = { row: sand.row + 1, col: sand.col + 1 };
+    if (!map.has(JSON.stringify(belowRight))) {
+      sand = belowRight;
+      continue;
+    }
+
+    resting = true;
+    map.set(JSON.stringify(sand), "o");
+    sandBits++;
+  }
+}
+
+console.log(map);
+
+console.log("Sand resting", sandBits);

@@ -1,3 +1,5 @@
+// THIS DIDN'T WORK, USED A SIMPLER AND FASTER SOLUTION USING MAPS
+
 import { readFileSync } from "fs";
 import { resolve } from "path";
 

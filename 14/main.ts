@@ -7,6 +7,7 @@ const lines = input.split("\n");
 const map = new Map<string, string>();
 let highestRow = 0;
 
+// PARSING THE INPUT
 for (const line of lines) {
   const parts = line.split(" -> ");
 
@@ -44,18 +45,29 @@ for (const line of lines) {
 
 // Simulate sand
 let fallingIntoAbyss = false;
-let sandBits = 0;
+let canFall = true;
 
-while (!fallingIntoAbyss) {
+let sandBits = 0;
+let sandBits2 = 0;
+
+while (canFall) {
   let sand = { row: 0, col: 500 };
   let resting = false;
 
   while (!resting) {
     const below = { row: sand.row + 1, col: sand.col };
 
-    if (below.row > highestRow) {
+    // PART 1
+    // if (below.row > highestRow) {
+    if (below.row === highestRow + 2) {
       fallingIntoAbyss = true;
-      break;
+      // PART 1
+      // break;
+
+      resting = true;
+      map.set(JSON.stringify(sand), "o");
+      sandBits2++;
+      continue;
     }
 
     if (!map.has(JSON.stringify(below))) {
@@ -75,11 +87,22 @@ while (!fallingIntoAbyss) {
       continue;
     }
 
+    if (sand.row === 0 && sand.col === 500) {
+      sandBits2++;
+      canFall = false;
+      break;
+    }
+
     resting = true;
     map.set(JSON.stringify(sand), "o");
-    sandBits++;
+
+    if (!fallingIntoAbyss) {
+      sandBits++;
+    }
+    sandBits2++;
   }
 }
 
 console.log(map);
 console.log("Sand resting", sandBits);
+console.log("Sand filled", sandBits2);

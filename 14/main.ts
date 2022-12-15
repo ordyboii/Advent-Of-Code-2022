@@ -28,7 +28,7 @@ for (const line of lines) {
         j <= Math.max(startRow, endRow);
         j++
       ) {
-        map.set(JSON.stringify({ row: startRow, col: j }), "#");
+        map.set(JSON.stringify({ row: j, col: startCol }), "#");
       }
     }
 
@@ -82,5 +82,4 @@ while (!fallingIntoAbyss) {
 }
 
 console.log(map);
-
 console.log("Sand resting", sandBits);

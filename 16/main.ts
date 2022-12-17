@@ -4,7 +4,7 @@ import { resolve } from "path";
 const input = readFileSync(resolve("16/input.txt"), "utf-8");
 const lines = input.split("\n");
 
-type Valve = { flowRate: number; tunnels: string[]; opened: boolean };
+type Valve = { flowRate: number; tunnels: string[] };
 const valves = new Map<string, Valve>();
 
 for (const line of lines) {
@@ -17,19 +17,25 @@ for (const line of lines) {
     .filter(str => str !== "")
     .map(str => str.replace(",", ""));
 
-  valves.set(tunnel, { flowRate, tunnels: connected, opened: false });
+  valves.set(tunnel, { flowRate, tunnels: connected });
 }
 
-// Need to have a function that finds the shortest path with the highest value
-let minute = 0;
+const findBestValve = (valve: string, visited = new Set<string>()) => {
+  visited.add(valve);
+  const tunnels = valves.get(valve)!.tunnels;
+
+  for (const tunnel of tunnels) {
+    // Needs to keep track of the distance between routes
+    // Needs to find the highest flow rates in the shortest distance
+  }
+};
+
 let totalPressure = 0;
 let opening = false;
 let currentValve = { key: "AA", ...valves.get("AA") };
 
-while (minute < 30) {
-  minute++;
-
-  if (opening && !currentValve.opened) {
+for (let minute = 1; minute <= 30; minute++) {
+  if (opening) {
     const pressure = minute * currentValve.flowRate!;
     totalPressure += pressure;
     opening = false;

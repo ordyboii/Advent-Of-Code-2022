@@ -15,12 +15,10 @@
     "day-13": "ts-node ./13/main.ts",
     "day-14": "ts-node ./14/main.ts",
     "day-15": "ts-node ./15/main.ts",
-    "day-16": "ts-node ./16/main.ts",
-    "day-17": "ts-node ./17/main.ts",
     "day-18": "ts-node ./18/main.ts",
-    "day-19": "ts-node ./19/main.ts",
     "day-20": "ts-node ./20/main.ts",
-    "day-21": "ts-node ./21/main.ts"
+    "day-21": "ts-node ./21/main.ts",
+    "day-25": "ts-node ./25/main.ts"
   },
   "devDependencies": {
     "ts-node": "^10.9.1"
